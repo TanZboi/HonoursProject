@@ -1,0 +1,68 @@
+seed: 0
+
+scene:
+  up: null                 # e.g. [0, -1, 0]; null = estimate it (SPEC A8)
+
+render:
+  long_side: 960           # render resolution, long side in pixels (4:3 aspect)
+  max_batch: 1             # cameras rendered at once
+  bg_rgb: [1.0, 1.0, 1.0]  # background for RGB previews (white)
+  bg_values: 0.0           # background for per-Gaussian value renders (black)
+  channel_chunk: 64        # channels rendered at once in render_values
+
+cameras:
+  n_views: 200             # views used for segmentation (~100 for the M3 early test)
+  interior_fraction: 0.7   # share of interior views; the rest are orbit views
+  margin: 0.10             # shrink the bounding box by this much for interior positions
+  height_range: [0.3, 0.8] # interior camera heights, as a fraction of room height
+  yaws: 8                  # viewing directions per interior position
+  pitches_deg: [-20.0, 0.0, 15.0]
+  orbit_radii: [0.6, 0.9]  # orbit rings, as a fraction of the box radius
+  fov_deg: 70.0            # horizontal field of view
+  filter_long_side: 160    # resolution of the low-res filter renders
+  min_coverage: 0.85       # reject views whose mean alpha is below this
+  min_depth: 0.15          # x room height; reject if >5% of pixels are closer
+  max_near_fraction: 0.05
+  exclude_radius: 0.3      # metres; distance to a held-out view for exclusion
+  exclude_angle_deg: 20.0
+
+masks:
+  model: sam2.1_hiera_large  # or sam2.1_hiera_base_plus if memory is tight (SPEC A7)
+  points_per_side: 32
+  pred_iou_thresh: 0.8
+  stability_score_thresh: 0.92
+  min_mask_region_area: 200
+  min_pixels: 200          # drop masks with fewer visible pixels after painting
+
+voting:
+  eps: 1.0e-3              # keep only weights above this in the sparse matrices
+  merge_thresh: 0.5
+  min_share: 0.4
+  min_views: 2
+
+post:
+  min_gaussians: 200       # objects smaller than this are merged into a neighbour
+  knn: 16
+  max_dist: 0.25           # metres; beyond this, a Gaussian goes to "background"
+
+train:
+  loss: contrastive        # contrastive | pairwise | classify
+  dim: 16
+  long_side: 480
+  batch_pixels: 4096
+  temperature: 0.1
+  margin_same: 0.1
+  margin_diff: 0.5
+  smooth_weight: 0.1       # 0 disables the 3D smoothness term
+  smooth_samples: 100000
+  smooth_knn: 16
+  lr: 1.0e-2
+  iters: 10000
+  log_every: 100
+  ckpt_every: 1000
+
+cluster:
+  method: hdbscan          # hdbscan | kmeans
+  max_samples: 300000
+  min_cluster_size: 100
+  min_sim: 0.5
