@@ -1,0 +1,25 @@
+# --- Data, checkpoints and outputs are never committed (SPEC 3.2 rule 4) ---
+data/
+runs/
+checkpoints/
+*.ply
+*.pt
+*.npz
+*.npy
+# ...except the tiny test fixtures, which the tests need.
+!tests/fixtures/
+!tests/fixtures/**
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.pytest_cache/
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+.DS_Store
