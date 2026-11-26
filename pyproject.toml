@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seg3d"
+version = "0.0.1"
+description = "Segment a finished 3D Gaussian splat into objects, using only the splat file."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+# Core dependencies: all permissive licences (see THIRD_PARTY_NOTICES.md).
+# No GPL/AGPL packages are allowed (SPEC 3.2 rule 2), so there is no plyfile here:
+# the PLY reader/writer is written by hand in seg3d/io/ply.py.
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "scikit-learn>=1.3",
+    "torch>=2.1",
+    "pyyaml>=6.0",
+    "tyro>=0.8",
+    "imageio>=2.31",
+    "pillow>=10.0",
+    "tqdm>=4.65",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+# GPU-only packages. These need an NVIDIA GPU with CUDA, so they are not installed
+# on the MacBook. Record the exact gsplat version and sam2 commit in DECISIONS.md.
+gpu = [
+    "gsplat>=1.5,<2",
+    "sam2 @ git+https://github.com/facebookresearch/sam2.git",
+]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+seg3d = "seg3d.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["seg3d*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "gpu: needs a CUDA GPU (auto-skipped when CUDA is absent)",
+    "scene: needs the real RBB-335 splat via SEG3D_SCENE=/path/to/rbb335.ply (skipped otherwise)",
+]
