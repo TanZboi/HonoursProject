@@ -1,0 +1,11 @@
+# Settings for the synthetic toy scene (scripts/make_toy_scene.py).
+# Only the values that differ from default.yaml are listed; the rest are inherited.
+
+render:
+  long_side: 320
+
+cameras:
+  n_views: 40
+
+post:
+  min_gaussians: 50
